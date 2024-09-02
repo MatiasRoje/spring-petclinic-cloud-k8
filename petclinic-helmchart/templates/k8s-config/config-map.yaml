@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: petclinic-config
-  namespace: {{ .Values.namespace | quote }}
+  namespace: {{ .Values.namespace }}
 data:
   application.yaml: |-
     server:
@@ -15,37 +15,44 @@ data:
         mime-types: application/json,text/css,application/javascript
         min-response-size: 2048
 
-    # Logging
-      logging.level.org.springframework: INFO
+    wavefront:
+      application:
+        name: spring-petclinic-k8s
+      freemium-account: true
 
-      # Metrics
-      management:
-        endpoint:
-          health:
-            probes:
-              enabled: true
+    # Logging
+    logging.level.org.springframework: INFO
+
+    # Metrics
+    management:
+      endpoint:
         health:
-          livenessState:
+          probes:
             enabled: true
-          readinessState:
-            enabled: true
-          restart:
-            enabled: true
-          metrics:
-            enabled: true
+      health:
+        livenessState:
+          enabled: true
+        readinessState:
+          enabled: true
+        restart:
+          enabled: true
+        metrics:
+          enabled: true
+        prometheus:
+          enabled: true
+      endpoints:
+        web:
+          exposure:
+            include: '*'
+      metrics:
+        export:
           prometheus:
             enabled: true
-        endpoints:
-          web:
-            exposure:
-              include: '*'
-        metrics:
-          export:
-            prometheus:
-              enabled: true
+          wavefront:
+            enabled: false
 
-      customers-service-id: http://customers-service.{{ .Values.namespace }}.svc.cluster.local:8080
-      visits-service-id: http://visits-service.{{ .Values.namespace }}.svc.cluster.local:8080
+    customers-service-id: http://customers-service.{{ .Values.namespace }}.svc.cluster.local:8080
+    visits-service-id: http://vists-service.{{ .Values.namespace }}.kubernetes.default.svc.cluster.local:8080
 
     spring:
       datasource:
@@ -58,7 +65,8 @@ data:
       jpa:
         show-sql: true
         hibernate:
-          ddl-auto: update
+          ddl-auto: none
+          generate-ddl: false
 
       sleuth:
         sampler:
@@ -87,19 +95,19 @@ data:
             proto-append: false
           routes:
             - id: vets-service
-              uri: http://vets-service.{{ .Values.namespace }}.svc.cluster.local:8080
+              uri: http://vets-service.{{ .Values.namespace }}.kubernetes.default.svc.cluster.local:8080
               predicates:
                 - Path=/api/vet/**
               filters:
                 - StripPrefix=2
             - id: visits-service
-              uri: http://visits-service.{{ .Values.namespace }}.svc.cluster.local:8080
+              uri: http://visits-service.{{ .Values.namespace }}.kubernetes.default.svc.cluster.local:8080
               predicates:
                 - Path=/api/visit/**
               filters:
                 - StripPrefix=2
             - id: customers-service
-              uri: http://customers-service.{{ .Values.namespace }}.svc.cluster.local:8080
+              uri: http://customers-service.{{ .Values.namespace }}.kubernetes.default.svc.cluster.local:8080
               predicates:
                 - Path=/api/customer/**
               filters:

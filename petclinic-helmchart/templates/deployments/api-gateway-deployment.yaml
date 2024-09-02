@@ -1,28 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gateway
-  namespace: {{ .Values.namespace }}
   labels:
     app: api-gateway
+  name: api-gateway
+  namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.apigateway.replicaCount | default 2 }}
+  replicas: {{ .Values.apigateway.replicaCount }}
   selector:
     matchLabels:
       app: api-gateway
+  strategy: {}
   template:
     metadata:
       labels:
         app: api-gateway
     spec:
       containers:
-      - name: api-gateway
-        image: {{ .Values.apigateway.image }}:{{ .Values.apigateway.version }}
+      - image: {{ .Values.apigateway.image }}:{{ .Values.apigateway.version }}
+        name: api-gateway
         env:
           - name: SPRING_DATASOURCE_USERNAME
             value: {{ .Values.database.username }}
           - name: DATABASE_URL
-            value: {{ .Values.jdbcUrl }}
+            value: jdbc:mysql://{{ .Values.database.host }}/{{ .Values.database.name }}?user={{ .Values.database.name }}&password={{ .Values.database.password }}
           - name: SPRING_DATASOURCE_PASSWORD
             valueFrom:
               secretKeyRef:
@@ -33,20 +34,23 @@ spec:
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
-            path: /actuator/health/liveness
             port: 8080
+            path: /actuator/health/liveness
           initialDelaySeconds: 90
           periodSeconds: 5
         readinessProbe:
           httpGet:
-            path: /actuator/health/readiness
             port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
+            path: /actuator/health/readiness
+          initialDelaySeconds: 15
         lifecycle:
           preStop:
             exec:
               command: ["sh", "-c", "sleep 10"]
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: kubernetes
         ports:
         - name: http
           containerPort: 8080
+      restartPolicy: Always

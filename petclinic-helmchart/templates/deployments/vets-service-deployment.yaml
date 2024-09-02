@@ -32,7 +32,7 @@ spec:
               name: database-secret
               key: dbpassword
         - name: SPRING_DATASOURCE_URL
-          value: {{ .Values.jdbcUrl }}
+          value: jdbc:mysql://{{ .Values.database.host }}/{{ .Values.database.name }}?user={{ .Values.database.name }}&password={{ .Values.database.password }}
         ports:
         - containerPort: 8080
         resources:

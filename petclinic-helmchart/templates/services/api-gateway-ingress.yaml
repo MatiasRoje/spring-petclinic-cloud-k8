@@ -1,52 +1,20 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: api-gateway
+  name: api-gateway-ingress
   namespace: {{ .Values.namespace }}
-  labels:
-    app: api-gateway
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
-  replicas: {{ .Values.apigateway.replicaCount | default 2 }}
-  selector:
-    matchLabels:
-      app: api-gateway
-  template:
-    metadata:
-      labels:
-        app: api-gateway
-    spec:
-      containers:
-      - name: api-gateway
-        image: {{ .Values.apigateway.image }}:{{ .Values.apigateway.version }}
-        env:
-          - name: SPRING_DATASOURCE_USERNAME
-            value: {{ .Values.database.username }}
-          - name: DATABASE_URL
-            value: {{ .Values.jdbcUrl }}
-          - name: SPRING_DATASOURCE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: database-secret
-                key: dbpassword
-          - name: SPRING_PROFILES_ACTIVE
-            value: kubernetes,test
-        imagePullPolicy: Always
-        livenessProbe:
-          httpGet:
-            path: /actuator/health/liveness
-            port: 8080
-          initialDelaySeconds: 90
-          periodSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /actuator/health/readiness
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        lifecycle:
-          preStop:
-            exec:
-              command: ["sh", "-c", "sleep 10"]
-        ports:
-        - name: http
-          containerPort: 8080
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: api-gateway-service
+              port:
+                number: 80
