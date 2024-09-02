@@ -1,6 +1,5 @@
----
-kind: ConfigMap
 apiVersion: v1
+kind: ConfigMap
 metadata:
   name: petclinic-config
 data:
@@ -14,6 +13,11 @@ data:
         enabled: true
         mime-types: application/json,text/css,application/javascript
         min-response-size: 2048
+
+    wavefront:
+      application:
+        name: spring-petclinic-k8s
+      freemium-account: true
 
     # Logging
     logging.level.org.springframework: INFO
@@ -43,9 +47,11 @@ data:
         export:
           prometheus:
             enabled: true
+          wavefront:
+            enabled: false
 
-    customers-service-id: http://customers-service.spring-petclinic.svc.cluster.local:8080
-    visits-service-id: http://visits-service.spring-petclinic.svc.cluster.local:8080
+    customers-service-id: http://customers-service.{{ .Values.namespace }}.svc.cluster.local:8080
+    visits-service-id: http://visits-service.{{ .Values.namespace }}.kubernetes.default.svc.cluster.local:8080
 
     spring:
       datasource:
@@ -86,19 +92,19 @@ data:
             proto-append: false
           routes:
             - id: vets-service
-              uri: http://vets-service.spring-petclinic.svc.cluster.local:8080
+              uri: http://vets-service.{{ .Values.namespace }}.kubernetes.default.svc.cluster.local:8080
               predicates:
                 - Path=/api/vet/**
               filters:
                 - StripPrefix=2
             - id: visits-service
-              uri: http://visits-service.spring-petclinic.svc.cluster.local:8080
+              uri: http://visits-service.{{ .Values.namespace }}.kubernetes.default.svc.cluster.local:8080
               predicates:
                 - Path=/api/visit/**
               filters:
                 - StripPrefix=2
             - id: customers-service
-              uri: http://customers-service.spring-petclinic.svc.cluster.local:8080
+              uri: http://customers-service.{{ .Values.namespace }}.kubernetes.default.svc.cluster.local:8080
               predicates:
                 - Path=/api/customer/**
               filters:
@@ -107,4 +113,3 @@ data:
       cache:
         ttl: 60
         heap-size: 101
-
