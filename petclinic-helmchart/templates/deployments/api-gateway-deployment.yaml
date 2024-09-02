@@ -1,36 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gateway
-  namespace: {{ .Values.namespace }}
   labels:
     app: api-gateway
+  name: api-gateway
+  namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.apigateway.replicaCount | default 2 }}
+  replicas: {{ .Values.apigateway.replicaCount }}
   selector:
     matchLabels:
       app: api-gateway
+  strategy: {}
   template:
     metadata:
       labels:
         app: api-gateway
     spec:
       containers:
-      - name: api-gateway
-        image: {{ .Values.apigateway.image }}:{{ .Values.apigateway.version }}
-        env:
-          - name: SPRING_DATASOURCE_USERNAME
-            value: {{ .Values.database.username }}
-          - name: DATABASE_URL
-            value: jdbc:mysql://{{ .Values.database.host }}/{{ .Values.database.name }}?user={{ .Values.database.name }}&password={{ .Values.database.password }}
-          - name: SPRING_DATASOURCE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: database-secret
-                key: dbpassword
-          - name: SPRING_PROFILES_ACTIVE
-            value: kubernetes,test
+      - image: {{ .Values.apigateway.image }}:{{ .Values.apigateway.version }}
+        name: api-gateway
         imagePullPolicy: Always
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value:  kubernetes,test
+        - name: SPRING_DATASOURCE_USERNAME
+          value: {{ .Values.database.username }}
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database-secret
+              key: dbpassword
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://{{ .Values.database.host }}/{{ .Values.database.name }}?user={{ .Values.database.name }}&password={{ .Values.database.password }}
         ports:
         - name: http
           containerPort: 8080
+      restartPolicy: Always
