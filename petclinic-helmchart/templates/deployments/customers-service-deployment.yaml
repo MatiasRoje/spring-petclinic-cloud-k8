@@ -6,7 +6,7 @@ metadata:
   name: customers-service
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.customersservice.replicaCount }}
+  replicas: {{ .Values.customersservice.replicaCount | default 1 }}
   selector:
     matchLabels:
       app: customers-service
@@ -16,38 +16,31 @@ spec:
       labels:
         app: customers-service
     spec:
+      serviceAccountName: rds-access-sa
       containers:
       - image: {{ .Values.customersservice.image }}:{{ .Values.customersservice.version }}
         name: customers-service
         imagePullPolicy: Always
-        livenessProbe:
-          httpGet:
-            port: 8080
-            path: /actuator/health/liveness
-          initialDelaySeconds: 90
-          periodSeconds: 5
-        readinessProbe:
-          httpGet:
-            port: 8080
-            path: /actuator/health/readiness
-          initialDelaySeconds: 15
-        lifecycle:
-          preStop:
-            exec:
-              command: ["sh", "-c", "sleep 10"]
         env:
         - name: SPRING_PROFILES_ACTIVE
-          value: kubernetes
-        - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://{{ .Values.database.host }}/{{ .Values.database.name }}?queryInterceptors=brave.mysql8.TracingQueryInterceptor&exceptionInterceptors=brave.mysql8.TracingExceptionInterceptor&zipkinServiceName=customers-db
+          value:  kubernetes,test
         - name: SPRING_DATASOURCE_USERNAME
           value: {{ .Values.database.username }}
         - name: SPRING_DATASOURCE_PASSWORD
           valueFrom:
-             secretKeyRef:
-               name: database-secret
-               key: dbpassword
+            secretKeyRef:
+              name: database-secret
+              key: dbpassword
+        - name: SPRING_DATASOURCE_URL
+          value: {{ .Values.jdbcUrl }}
         ports:
         - containerPort: 8080
-        resources: {}
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+
       restartPolicy: Always
