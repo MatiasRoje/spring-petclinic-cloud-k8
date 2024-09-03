@@ -2,22 +2,22 @@ namespace: prod
 
 apigateway:
   image: matiasroje/spring-petclinic-cloud-api-gateway
-  version: 1.0.1
+  version: 1.0.15
   replicaCount: 2
 
 customersservice:
   image: matiasroje/spring-petclinic-cloud-customers-service
-  version: 1.0.1
+  version: 1.0.15
   replicaCount: 2
 
 vetsservice:
   image: matiasroje/spring-petclinic-cloud-vets-service
-  version: 1.0.1
+  version: 1.0.15
   replicaCount: 2
 
 visitsservice:
   image: matiasroje/spring-petclinic-cloud-visits-service
-  version: 1.0.1
+  version: 1.0.15
   replicaCount: 2
 
 database:
