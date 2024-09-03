@@ -20,18 +20,33 @@ spec:
       - image: {{ .Values.apigateway.image }}:{{ .Values.apigateway.version }}
         name: api-gateway
         imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            port: 8080
+            path: /actuator/health/liveness
+          initialDelaySeconds: 90
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            port: 8080
+            path: /actuator/health/readiness
+          initialDelaySeconds: 15
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sh", "-c", "sleep 10"]
         env:
-        - name: SPRING_PROFILES_ACTIVE
-          value:  kubernetes,test
-        - name: SPRING_DATASOURCE_USERNAME
-          value: {{ .Values.database.username }}
-        - name: SPRING_DATASOURCE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: database-secret
-              key: dbpassword
-        - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://{{ .Values.database.host }}/{{ .Values.database.name }}?user={{ .Values.database.name }}&password={{ .Values.database.password }}
+          - name: SPRING_DATASOURCE_USERNAME
+            value: {{ .Values.database.username }}
+          - name: DATABASE_URL
+            value: jdbc:mysql://{{ .Values.database.host }}/{{ .Values.database.name }}?user={{ .Values.database.name }}&password={{ .Values.database.password }}
+          - name: SPRING_DATASOURCE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: database-secret
+                key: dbpassword
+          - name: SPRING_PROFILES_ACTIVE
+            value: kubernetes,test
         ports:
         - name: http
           containerPort: 8080

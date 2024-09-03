@@ -25,5 +25,3 @@ database:
   name: petclinicdb
   username: petclinic
   password: cGV0Y2xpbmljZGJwYXNzd29yZA==
-
-jdbcUrl: jdbc:mysql://petclinic-db.cpgk4ew06fif.eu-west-1.rds.amazonaws.com:3306/petclinicdb?user=petclinic&password=cGV0Y2xpbmljZGJwYXNzd29yZA==
