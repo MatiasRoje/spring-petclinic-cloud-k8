@@ -1,22 +1,22 @@
 namespace: prod
 
 apigateway:
-  image: matiasroje/spring-petclinic-cloud-api-gateway
+  image: 339713077897.dkr.ecr.eu-west-1.amazonaws.com/petclinic/api-gateway
   version: 1.0.15
   replicaCount: 2
 
 customersservice:
-  image: matiasroje/spring-petclinic-cloud-customers-service
+  image: 339713077897.dkr.ecr.eu-west-1.amazonaws.com/petclinic/customers-service
   version: 1.0.15
   replicaCount: 2
 
 vetsservice:
-  image: matiasroje/spring-petclinic-cloud-vets-service
+  image: 339713077897.dkr.ecr.eu-west-1.amazonaws.com/petclinic/vets-service
   version: 1.0.15
   replicaCount: 2
 
 visitsservice:
-  image: matiasroje/spring-petclinic-cloud-visits-service
+  image: 339713077897.dkr.ecr.eu-west-1.amazonaws.com/petclinic/visits-service
   version: 1.0.15
   replicaCount: 2
 
