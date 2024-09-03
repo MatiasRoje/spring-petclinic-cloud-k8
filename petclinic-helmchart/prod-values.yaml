@@ -2,22 +2,22 @@ namespace: prod
 
 apigateway:
   image: 339713077897.dkr.ecr.eu-west-1.amazonaws.com/petclinic/api-gateway
-  version: 1.0.15
+  version: 1.0.3
   replicaCount: 2
 
 customersservice:
   image: 339713077897.dkr.ecr.eu-west-1.amazonaws.com/petclinic/customers-service
-  version: 1.0.15
+  version: 1.0.3
   replicaCount: 2
 
 vetsservice:
   image: 339713077897.dkr.ecr.eu-west-1.amazonaws.com/petclinic/vets-service
-  version: 1.0.15
+  version: 1.0.3
   replicaCount: 2
 
 visitsservice:
   image: 339713077897.dkr.ecr.eu-west-1.amazonaws.com/petclinic/visits-service
-  version: 1.0.15
+  version: 1.0.3
   replicaCount: 2
 
 database:
