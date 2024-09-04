@@ -1,0 +1,28 @@
+# Please don't modify this file, it's for testing purposes
+namespace: prod
+
+apigateway:
+  image: matiasroje/spring-petclinic-cloud-api-gateway
+  version: latest
+  replicaCount: 2
+
+customersservice:
+  image: matiasroje/spring-petclinic-cloud-customers-service
+  version: latest
+  replicaCount: 2
+
+vetsservice:
+  image: matiasroje/spring-petclinic-cloud-vets-service
+  version: latest
+  replicaCount: 2
+
+visitsservice:
+  image: matiasroje/spring-petclinic-cloud-visits-service
+  version: latest
+  replicaCount: 2
+
+database:
+  host: petclinic-db.cxiuqiwk8irr.eu-west-3.rds.amazonaws.com:3306
+  name: petclinicdb
+  username: petclinic
+  password: cGV0Y2xpbmljZGJwYXNzd29yZA==
