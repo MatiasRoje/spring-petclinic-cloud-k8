@@ -1,27 +1,27 @@
 namespace: staging
 
 apigateway:
-  image: matiasroje/spring-petclinic-cloud-api-gateway
+  image: 339713077897.dkr.ecr.eu-west-3.amazonaws.com/petclinic/api-gateway
   version: staging-1.0.2
   replicaCount: 1
 
 customersservice:
-  image: matiasroje/spring-petclinic-cloud-customers-service
+  image: 339713077897.dkr.ecr.eu-west-3.amazonaws.com/petclinic/customers-service
   version: staging-1.0.2
   replicaCount: 1
 
 vetsservice:
-  image: matiasroje/spring-petclinic-cloud-vets-service
+  image: 339713077897.dkr.ecr.eu-west-3.amazonaws.com/petclinic/vets-service
   version: staging-1.0.2
   replicaCount: 1
 
 visitsservice:
-  image: matiasroje/spring-petclinic-cloud-visits-service
+  image: 339713077897.dkr.ecr.eu-west-3.amazonaws.com/petclinic/visits-service
   version: staging-1.0.2
   replicaCount: 1
 
 database:
-  host: petclinic-db.cpgk4ew06fif.eu-west-1.rds.amazonaws.com:3306
+  host: petclinic-db.cxiuqiwk8irr.eu-west-3.rds.amazonaws.com:3306
   name: petclinicdb
   username: petclinic
   password: cGV0Y2xpbmljZGJwYXNzd29yZA==
