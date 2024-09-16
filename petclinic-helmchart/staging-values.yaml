@@ -2,22 +2,22 @@ namespace: staging
 
 apigateway:
   image: matiasroje/spring-petclinic-cloud-api-gateway
-  version: latest
+  version: staging-1.0.2
   replicaCount: 1
 
 customersservice:
   image: matiasroje/spring-petclinic-cloud-customers-service
-  version: latest
+  version: staging-1.0.2
   replicaCount: 1
 
 vetsservice:
   image: matiasroje/spring-petclinic-cloud-vets-service
-  version: latest
+  version: staging-1.0.2
   replicaCount: 1
 
 visitsservice:
   image: matiasroje/spring-petclinic-cloud-visits-service
-  version: latest
+  version: staging-1.0.2
   replicaCount: 1
 
 database:
